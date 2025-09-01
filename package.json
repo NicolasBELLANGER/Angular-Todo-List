@@ -7,7 +7,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:angular-todo-list": "node dist/angular-todo-list/server/server.mjs"
+    "serve:ssr:angular-todo-list": "node dist/angular-todo-list/server/server.mjs",
+    "lint": "ng lint",
+    "prepare": "husky",
+    "format": "prettier --write \"src/**/*.{ts,html,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,json}\""
   },
   "prettier": {
     "printWidth": 100,
@@ -43,12 +47,19 @@
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "angular-eslint": "20.2.0",
+    "eslint": "^9.33.0",
+    "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "lint-staged": "^16.1.5",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "8.40.0"
   }
 }
