@@ -8,7 +8,7 @@ import { User, LoginRequest, RegisterRequest } from '../models/user.model';
 })
 export class AuthService {
   private currentUser = signal<User | null>(null);
-  public currentUser$ = this.currentUser.asReadonly();
+  public readonly currentUser$ = this.currentUser.asReadonly();
 
   // Mock data - utilisateurs de test
   private users: User[] = [
@@ -32,7 +32,7 @@ export class AuthService {
     'user@example.com': 'user123',
   };
 
-  cconstructor() {
+  constructor() {
     if (typeof window !== 'undefined') {
       const savedUser = localStorage.getItem('currentUser');
       if (savedUser) {
