@@ -131,4 +131,33 @@ export class TodoService {
   getTodosByPriority(priority: Todo['priority']): Todo[] {
     return this.todos().filter((todo) => todo.priority === priority);
   }
+  todoStats() {
+    const todos = this.todos();
+    const total = todos.length;
+    const completed = todos.filter((t) => t.status === 'done').length;
+    const inProgress = todos.filter((t) => t.status === 'in-progress').length;
+    const highPriority = todos.filter((t) => t.priority === 'high').length;
+    const completionRate = total > 0 ? (completed / total) * 100 : 0;
+
+    return {
+      total,
+      completed,
+      inProgress,
+      highPriority,
+      completionRate,
+    };
+  }
+
+  // Sous-ensembles de todos selon le statut
+  pendingTodos() {
+    return this.todos().filter((t) => t.status === 'todo');
+  }
+
+  inProgressTodos() {
+    return this.todos().filter((t) => t.status === 'in-progress');
+  }
+
+  completedTodos() {
+    return this.todos().filter((t) => t.status === 'done');
+  }
 }
