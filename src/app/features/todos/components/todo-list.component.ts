@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Todo } from '../models/todo.model';
@@ -10,6 +10,7 @@ import { HighlightDirective } from '../../../shared/directives/highlights.direct
   selector: 'app-todo-list',
   standalone: true,
   imports: [CommonModule, FormsModule, PriorityPipe, HighlightDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Dashboard des statistiques -->
     <div class="mb-8">
