@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { Todo, CreateTodoRequest } from '../models/todo.model';
 
 @Injectable({
@@ -131,33 +131,26 @@ export class TodoService {
   getTodosByPriority(priority: Todo['priority']): Todo[] {
     return this.todos().filter((todo) => todo.priority === priority);
   }
-  todoStats() {
-    const todos = this.todos();
-    const total = todos.length;
-    const completed = todos.filter((t) => t.status === 'done').length;
-    const inProgress = todos.filter((t) => t.status === 'in-progress').length;
-    const highPriority = todos.filter((t) => t.priority === 'high').length;
-    const completionRate = total > 0 ? (completed / total) * 100 : 0;
 
-    return {
-      total,
-      completed,
-      inProgress,
-      highPriority,
-      completionRate,
-    };
-  }
+  public completedTodos = computed(() => this.todos().filter((todo) => todo.status === 'done'));
 
-  // Sous-ensembles de todos selon le statut
-  pendingTodos() {
-    return this.todos().filter((t) => t.status === 'todo');
-  }
+  public pendingTodos = computed(() => this.todos().filter((todo) => todo.status === 'todo'));
 
-  inProgressTodos() {
-    return this.todos().filter((t) => t.status === 'in-progress');
-  }
+  public inProgressTodos = computed(() =>
+    this.todos().filter((todo) => todo.status === 'in-progress'),
+  );
 
-  completedTodos() {
-    return this.todos().filter((t) => t.status === 'done');
-  }
+  public highPriorityTodos = computed(() =>
+    this.todos().filter((todo) => todo.priority === 'high'),
+  );
+
+  public todoStats = computed(() => ({
+    total: this.todos().length,
+    completed: this.completedTodos().length,
+    inProgress: this.inProgressTodos().length,
+    pending: this.pendingTodos().length,
+    highPriority: this.highPriorityTodos().length,
+    completionRate:
+      this.todos().length > 0 ? (this.completedTodos().length / this.todos().length) * 100 : 0,
+  }));
 }

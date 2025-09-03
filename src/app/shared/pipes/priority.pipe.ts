@@ -4,13 +4,16 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'priority',
 })
 export class PriorityPipe implements PipeTransform {
-  transform(priority: 'low' | 'medium' | 'high'): string {
-    const priorityMap = {
-      low: 'Faible',
-      medium: 'Moyenne',
-      high: 'Haute',
-    };
-
-    return priorityMap[priority] || priority;
+  transform(priority: string): string {
+    switch (priority) {
+      case 'low':
+        return 'Faible';
+      case 'medium':
+        return 'Moyenne';
+      case 'high':
+        return 'Haute';
+      default:
+        return priority;
+    }
   }
 }
