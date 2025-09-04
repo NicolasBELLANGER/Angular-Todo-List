@@ -38,6 +38,13 @@ export class TodoService {
     },
   ]);
 
+  constructor() {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('todos') : null;
+    if (saved) {
+      this.todos.set(JSON.parse(saved));
+    }
+  }
+
   // Simuler un délai réseau
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -78,6 +85,11 @@ export class TodoService {
     };
 
     this.todos.update((todos) => [...todos, newTodo]);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('todos', JSON.stringify(this.todos()));
+    }
+
     console.log('✅ Service: Todo créé avec succès:', newTodo);
     return newTodo;
   }
@@ -102,6 +114,10 @@ export class TodoService {
       }),
     );
 
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('todos', JSON.stringify(this.todos()));
+    }
+
     console.log(`✅ Service: Todo ${id} mis à jour:`, updatedTodo);
     return updatedTodo;
   }
@@ -118,6 +134,10 @@ export class TodoService {
       deleted = filtered.length < initialLength;
       return filtered;
     });
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('todos', JSON.stringify(this.todos()));
+    }
 
     console.log(`✅ Service: Todo ${id} supprimé:`, deleted);
     return deleted;

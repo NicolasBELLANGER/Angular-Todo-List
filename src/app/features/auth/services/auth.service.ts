@@ -11,7 +11,7 @@ export class AuthService {
   public readonly currentUser$ = this.currentUser.asReadonly();
 
   // Mock data - utilisateurs de test
-  private users: User[] = [
+  private defaultUsers: User[] = [
     {
       id: 1,
       name: 'Admin User',
@@ -27,12 +27,17 @@ export class AuthService {
   ];
 
   // Mock data - mots de passe (en réalité, ils seraient hashés)
-  private passwords: Record<string, string> = {
+  private defaultPasswords: Record<string, string> = {
     'admin@example.com': 'admin123',
     'user@example.com': 'user123',
   };
 
+  private users: User[] = [...this.defaultUsers];
+  private passwords: Record<string, string> = { ...this.defaultPasswords };
+
   constructor() {
+    this.loadUserFromStorage();
+
     if (typeof window !== 'undefined') {
       const savedUser = localStorage.getItem('currentUser');
       if (savedUser) {
@@ -71,6 +76,7 @@ export class AuthService {
     // Ajouter aux mock data
     this.users.push(newUser);
     this.passwords[userData.email] = userData.password;
+    this.saveUserToStorage();
 
     // Simuler un délai réseau
     return of(newUser).pipe(delay(500));
@@ -79,6 +85,7 @@ export class AuthService {
   logout(): void {
     this.currentUser.set(null);
     localStorage.removeItem('currentUser');
+    this.clearAllUsersData();
   }
 
   getCurrentUser(): User | null {
@@ -98,12 +105,45 @@ export class AuthService {
     return throwError(() => new Error('Utilisateur non trouvé'));
   }
 
+  private saveUserToStorage(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('users', JSON.stringify(this.users));
+      localStorage.setItem('usersPassword', JSON.stringify(this.passwords));
+    }
+  }
+
+  private loadUserFromStorage(): void {
+    if (typeof window !== 'undefined') {
+      const savedUsers = localStorage.getItem('users');
+      const savedPasswords = localStorage.getItem('usersPassword');
+
+      if (savedUsers && savedPasswords) {
+        this.users = JSON.parse(savedUsers);
+        this.passwords = JSON.parse(savedPasswords);
+      } else {
+        this.users = [...this.defaultUsers];
+        this.passwords = { ...this.defaultPasswords };
+        this.saveUserToStorage();
+      }
+    }
+  }
+
+  private clearAllUsersData(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('users');
+      localStorage.removeItem('usersPassword');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('authToken');
+      this.loadUserFromStorage();
+    }
+  }
+
   getToken(): string | null {
     const user = this.currentUser();
     return user ? `mock-token-${user.id}` : null;
   }
 
-  // Méthode pour définir l'utilisateur connecté (utilisée après login)
+  // // Méthode pour définir l'utilisateur connecté (utilisée après login)
   setCurrentUser(user: User): void {
     this.currentUser.set(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
